@@ -1,0 +1,117 @@
+{
+  "entities": {
+    "Subject": {
+      "title": "Subject",
+      "description": "A student's subject/course with exam date, academic level, and syllabus/notes content.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner Firebase Auth UID" },
+        "name": { "type": "string", "description": "Subject or course name" },
+        "examType": {
+          "type": "string",
+          "enum": ["ASSIGNMENT", "INTERNAL", "SEMESTER"],
+          "description": "Assessment type"
+        },
+        "academicLevel": {
+          "type": "string",
+          "enum": ["GRADE_9_10", "GRADE_11_12", "UNIVERSITY"],
+          "description": "Student grade or university level"
+        },
+        "examDateEpochMillis": { "type": "integer", "description": "Exam target date in UTC epoch milliseconds" },
+        "syllabusText": { "type": "string", "description": "Pasted or AI-extracted syllabus and notes" },
+        "colorIndex": { "type": "integer", "description": "Accent palette index 0..5" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server creation timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server update timestamp" }
+      },
+      "required": ["userId", "name", "examType", "academicLevel", "examDateEpochMillis", "syllabusText", "colorIndex", "createdAt", "updatedAt"]
+    },
+    "StudyTask": {
+      "title": "StudyTask",
+      "description": "A day-by-day study plan item scheduled before an exam.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner Firebase Auth UID" },
+        "subjectId": { "type": "string", "description": "Parent subject document ID" },
+        "subjectName": { "type": "string", "description": "Denormalized subject title" },
+        "topicTitle": { "type": "string", "description": "Topic or study milestone title" },
+        "focusTip": { "type": "string", "description": "Actionable study guidance for this topic" },
+        "scheduledDateIso": { "type": "string", "description": "Scheduled ISO date YYYY-MM-DD" },
+        "difficulty": {
+          "type": "string",
+          "enum": ["EASY", "MEDIUM", "HARD"],
+          "description": "Topic difficulty"
+        },
+        "estimatedMinutes": { "type": "integer", "description": "Estimated study duration in minutes" },
+        "completed": { "type": "boolean", "description": "Whether student completed the study task" },
+        "sortOrder": { "type": "integer", "description": "Display order within the plan" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server creation timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server update timestamp" }
+      },
+      "required": ["userId", "subjectId", "subjectName", "topicTitle", "focusTip", "scheduledDateIso", "difficulty", "estimatedMinutes", "completed", "sortOrder", "createdAt", "updatedAt"]
+    },
+    "RevisionSheet": {
+      "title": "RevisionSheet",
+      "description": "Quick revision summary, key points, formulas, and exam tips generated from notes.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner Firebase Auth UID" },
+        "subjectId": { "type": "string", "description": "Parent subject document ID" },
+        "subjectName": { "type": "string", "description": "Denormalized subject title" },
+        "title": { "type": "string", "description": "Revision sheet heading" },
+        "summary": { "type": "string", "description": "Concise revision summary" },
+        "keyPoints": { "type": "array", "description": "Key bullet points" },
+        "formulas": { "type": "array", "description": "Key formulas, equations, or definitions" },
+        "examTips": { "type": "array", "description": "Quick exam tips and mnemonics" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server creation timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server update timestamp" }
+      },
+      "required": ["userId", "subjectId", "subjectName", "title", "summary", "keyPoints", "formulas", "examTips", "createdAt", "updatedAt"]
+    },
+    "PracticeTest": {
+      "title": "PracticeTest",
+      "description": "Generated practice test with MCQ, short answer, and long answer questions and AI grading.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner Firebase Auth UID" },
+        "subjectId": { "type": "string", "description": "Parent subject document ID" },
+        "subjectName": { "type": "string", "description": "Denormalized subject title" },
+        "title": { "type": "string", "description": "Practice test title" },
+        "difficulty": {
+          "type": "string",
+          "enum": ["STANDARD", "CHALLENGE"],
+          "description": "Difficulty preset"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["IN_PROGRESS", "GRADED"],
+          "description": "Test completion status"
+        },
+        "totalMarks": { "type": "integer", "description": "Maximum total score" },
+        "earnedMarks": { "type": "integer", "description": "Score awarded after grading" },
+        "overallFeedback": { "type": "string", "description": "AI grader summary feedback" },
+        "questions": { "type": "array", "description": "List of test question objects with student answers and grading" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server creation timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server update timestamp" }
+      },
+      "required": ["userId", "subjectId", "subjectName", "title", "difficulty", "status", "totalMarks", "earnedMarks", "overallFeedback", "questions", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/subjects/{subjectId}": {
+      "schema": { "$ref": "#/entities/Subject" },
+      "description": "User-scoped academic subjects and syllabi"
+    },
+    "/users/{userId}/studyTasks/{taskId}": {
+      "schema": { "$ref": "#/entities/StudyTask" },
+      "description": "User-scoped daily study plan tasks"
+    },
+    "/users/{userId}/revisions/{revisionId}": {
+      "schema": { "$ref": "#/entities/RevisionSheet" },
+      "description": "User-scoped quick revision sheets"
+    },
+    "/users/{userId}/practiceTests/{testId}": {
+      "schema": { "$ref": "#/entities/PracticeTest" },
+      "description": "User-scoped practice tests and grading results"
+    }
+  }
+}

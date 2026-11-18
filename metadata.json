@@ -1,0 +1,6 @@
+{
+  "name": "ExamPilot",
+  "description": "AI-powered study planner, quick revision summaries, and practice tests for students from Grade 9 through university.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
